@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planets</title>
+    
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #000;
+        background-image: url('images used/stars-1654074_1920 w orbit.jpg');
+        background-size: cover;
+        background-position: center;
+        transition: all 0.3s ease;
+        color: #fff; 
+        font-family: Arial, Helvetica, sans-serif, sans-serif; 
+    }
+
+    #container {
+        width: 100%;
+        height: 100vh;
+        position: relative;
+        cursor: move;
+    }
+
+    .planet {
+        position: absolute;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s ease;
+       
+    }
+
+    .planet.full-screen {
+        z-index: 9999;
+        cursor: zoom-out;
+    }
+    .header {
+        position: absolute;
+        top: 50px; 
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px; 
+        font-weight: bold; 
+    }
+
+    
+    .planet:hover {
+        transform: scale(1.1);
+        z-index: 9999;
+    }
+</style>
+</head>
+<body>
+
+    <div class="header">Click and press the planet</div>
+
+    <div id="container">
+        
+        <div class="planet" id="planet1" style="left: 22.5%; top: 57%;  width: 60px; ">
+            <img src="images used/152549335132A2BD23.png" style="width: 100%">
+            <span class="planet-text">Mercury</span>
+        </div>
+        <div class="planet" id="planet2" style="left: 80%; top: 20%; width: 170px;">
+            <img src="images used/uranus-11625_1280.png" style="width: 100%">
+            <span class="planet-text">Uranus</span>
+        </div>
+        <div class="planet" id="planet3" style="left: 36.5%; top: 50%;  width: 85px;">
+            <img src="images used/earth-11015_1920.png" style="width: 100%">
+            <span class="planet-text">Earth</span>
+        </div>
+        <div class="planet" id="planet4" style="left: 45%; top: 55%;  width: 330px;">
+            <img src="images used/saturn-67671_1920.png" style="width: 100%">
+            <span class="planet-text">Saturn</span>
+        </div>
+        <div class="planet" id="planet5" style="left: 25%; top: 45%;  width: 65px;">
+            <img src="images used/venus-11022_1920.png" style="width: 100%">
+            <span class="planet-text">Venus</span>
+        </div>
+        <div class="planet" id="planet6" style="left: 34.5%; top: 65%; width: 80px;">
+            <img src="images used/mars-11012_1920.png" style="width: 100%">
+            <span class="planet-text">Mars</span>
+        </div>
+        <div class="planet" id="planet7" style="left: 53%; top: 30%;  width: 180px;">
+            <img src="images used/jupiter-8130601_1920.png" style="width: 100%">
+            <span class="planet-text">Jupiter</span>
+        </div>
+        <div class="planet" id="planet8" style="left: 80%; top: 60%;  width: 130px;">
+            <img src="images used/neptune-67537_1920.png" style="width: 100%">
+            <span class="planet-text">Neptune</span>
+        </div>
+        <div class="planet" id="planet9" style="left: -15%; top: 50%;  width: 600px;">
+            <img src="images used/space-1506349_1920.png" style="width: 100%">
+        </div>
+
+    </div>
+    
+    <script>
+        const container = document.getElementById('container');
+        const planets = document.querySelectorAll('.planet');
+
+        planets.forEach(planet => {
+            let isDragging = false;
+            let initialX;
+            let initialY;
+            let currentX;
+            let currentY;
+        
+            planet.addEventListener('mousedown', function(e) {
+                planets.forEach(p => {
+                    p.style.zIndex = 1;
+                });
+                planet.style.zIndex = 9999;isDragging = true;
+                initialX = e.clientX - parseFloat(getComputedStyle(planet).left);
+                initialY = e.clientY - parseFloat(getComputedStyle(planet).top);
+                planet.classList.add('dragging');
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                    planet.style.left = currentX + 'px';
+                    planet.style.top = currentY + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', function() {
+                isDragging = false;
+                planet.classList.remove('dragging');
+            });
+        });
+
+        function zoomPage(e) {
+            const delta = Math.max(-0.5, Math.min(0.5, (e.wheelDelta || -e.detail)));
+            const scaleMultiplier = 1 + delta * 0.3; 
+
+            const body = document.body;
+            const bodyRect = body.getBoundingClientRect();
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            const bodyWidth = bodyRect.width * scaleMultiplier;
+            const bodyHeight = bodyRect.height * scaleMultiplier;
+            const bodyLeft = bodyRect.left - (mouseX - bodyRect.left) * (scaleMultiplier - 1);
+            const bodyTop = bodyRect.top - (mouseY - bodyRect.top) * (scaleMultiplier - 1);
+
+            body.style.width = bodyWidth + 'px';
+            body.style.height = bodyHeight + 'px';
+            body.style.left = bodyLeft + 'px';
+            body.style.top = bodyTop + 'px';
+
+            if (bodyWidth > 2000 || bodyHeight > 2000) {
+                document.body.style.backgroundImage = "url('images used/astronomy-1867616_1920s.jpg')";
+            } else {
+                document.body.style.backgroundImage = "url('images used/stars-1654074_1920 w orbit.jpg')";
+            }
+
+            planets.forEach(planet => {
+                const planetWidth = parseFloat(getComputedStyle(planet).width) / scaleMultiplier;
+                const planetHeight = parseFloat(getComputedStyle(planet).height) / scaleMultiplier;
+                planet.style.width = planetWidth + 'px';
+                planet.style.height = planetHeight + 'px';
+            });
+        }
+
+        document.addEventListener('mousewheel', zoomPage, false);
+        document.addEventListener('DOMMouseScroll', zoomPage, false);
+
+        planets.forEach(planet => {
+            let isResizing = false;
+            let resizeInterval;
+            const scaleFactor = 1.1; 
+
+            planet.addEventListener('mousedown', function() {
+                isResizing = true;
+                resizeInterval = setInterval(function() {
+                    let currentWidth = parseFloat(getComputedStyle(planet).width);
+                    let currentHeight = parseFloat(getComputedStyle(planet).height);
+                    let newWidth = currentWidth * scaleFactor;
+                    let newHeight = currentHeight * scaleFactor;
+
+                    planet.style.width = newWidth + 'px';
+                    planet.style.height = newHeight + 'px';
+
+                    
+                    let rect = planet.getBoundingClientRect();
+                    let centerX = rect.left + rect.width / 2;
+                    let centerY = rect.top + rect.height / 2;
+                    let viewportWidth = window.innerWidth;
+                    let viewportHeight = window.innerHeight;
+                    let deltaX = viewportWidth / 2 - centerX;
+                    let deltaY = viewportHeight / 2 - centerY;
+
+                    planet.style.left = (parseFloat(getComputedStyle(planet).left) + deltaX) + 'px';
+                    planet.style.top = (parseFloat(getComputedStyle(planet).top) + deltaY) + 'px';
+                }, 100); 
+            });
+
+            document.addEventListener('mouseup', function() {
+                if (isResizing) {
+                    isResizing = false;
+                    clearInterval(resizeInterval);
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
